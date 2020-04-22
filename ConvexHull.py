@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # from scipy.spatial import ConvexHull
 
-FILE_NAME = "layer4"
+FILE_NAME = "layer1"
 
 
 def get_degree_all(x_arr, y_arr):
@@ -60,13 +60,6 @@ def MyConvexHull(_points):
     for degree in point_dict:
         point_list.append([degree, point_dict[degree][0], point_dict[degree][1]])
     point_list.sort()
-    """
-    point_list = []
-    for idx in range(np.alen(convex_points)):
-        point_list.append([degrees[idx], idx, np.copy(convex_points[idx])])
-    point_list.sort()
-    pprint.pprint(point_list)
-    """
     sorted_list = []
     for idx in range(np.alen(point_list)):
         sorted_list.append([point_list[idx][1], point_list[idx][2]])
@@ -131,7 +124,7 @@ while True:
 
     i = new_list.index(min(new_list))
     for _ in range(len(new_list)):
-        out_file.write("{} ".format(idx_list[new_list[(i % len(new_list))]]))  # 돌리기 돌리도록 합세다/.
+        out_file.write("{} ".format(idx_list[new_list[(i % len(new_list))]]))
         i += 1
     out_file.write("\n")
 
