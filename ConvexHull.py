@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 # from scipy.spatial import ConvexHull
 
+FILE_NAME = "layer2"
+
 
 def get_degree_all(x_arr, y_arr):
     return np.arctan2(y_arr, x_arr) * 180 / np.pi
@@ -23,7 +25,6 @@ def ccw(p1, p2, p3):
     else:
         return 0  # same
 
-import pprint
 
 def MyConvexHull(_points):
     convex_points = np.copy(_points)
@@ -51,7 +52,7 @@ def MyConvexHull(_points):
         if degrees[idx] in point_dict.keys():
             x1, y1 = convex_points[idx]
             x2, y2 = point_dict[degrees[idx]][1]
-            if x1**2 + y1**2 > x2**2 + y2**2:
+            if x1 ** 2 + y1 ** 2 > x2 ** 2 + y2 ** 2:
                 point_dict[degrees[idx]] = (idx, convex_points[idx])
         else:
             point_dict[degrees[idx]] = (idx, np.copy(convex_points[idx]))
@@ -88,20 +89,22 @@ def MyConvexHull(_points):
     return result
 
 
+idx_list = list()
 points = np.array([], dtype=int)
-inp_file = open("layer3.txt", "r")
+inp_file = open("{}.txt".format(FILE_NAME), "r")
 N = int(inp_file.readline())
-for _ in range(N):
+for i in range(N):
     line = inp_file.readline()
     points = np.append(points, np.array([int(line.split()[0]), int(line.split()[1])]))
+    idx_list.append(i)
 inp_file.close()
-points = points.reshape(int(np.alen(points)/2), 2)
+points = points.reshape(int(np.alen(points) / 2), 2)
 
+out_file = open("{}_out.txt".format(FILE_NAME), "w")
 while True:
     if np.alen(points) < 3:
         break
-    #hull = ConvexHull(points)
-    pprint.pprint(points)
+    # hull = ConvexHull(points)
     hull = MyConvexHull(points)
 
     plt.plot(points[:, 0], points[:, 1], 'o')
@@ -115,12 +118,36 @@ while True:
         point_set.add(simplex[0])
         point_set.add(simplex[1])
 
+    remove_set = set()
+    new_list = []
+    for simplex in hull:
+        new_list.append(simplex[0])
+        for idx in range(np.alen(points)):
+            if idx != simplex[0] and idx != simplex[1]:
+                if ccw(points[simplex[0]], points[idx], points[simplex[1]]) == 0:
+                    remove_set.add(idx)
+                    new_list.append(idx)
+
+    i = new_list.index(min(new_list))
+    for _ in range(len(new_list)):
+        out_file.write("{} ".format(idx_list[new_list[(i % len(new_list))]]))  # 돌리기 돌리도록 합세다/.
+        i += 1
+    out_file.write("\n")
+
     next_point = np.array([], dtype=int)
     for i in range(np.alen(points)):
-        if not (i in point_set):
+        if not (i in point_set) and not (i in remove_set):
             next_point = np.append(next_point, np.array(points[i]))
+        else:
+            idx_list[i] = -1
     next_point = next_point.reshape(int(np.alen(next_point) / 2), 2)
     points = np.copy(next_point)
-    pprint.pprint(points)
+
+    new_list = []
+    for value in idx_list:
+        if value != -1:
+            new_list.append(value)
+    idx_list = new_list
 
 plt.show()
+out_file.close()
