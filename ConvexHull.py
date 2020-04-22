@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # from scipy.spatial import ConvexHull
 
-FILE_NAME = "layer2"
+FILE_NAME = "layer4"
 
 
 def get_degree_all(x_arr, y_arr):
@@ -128,6 +128,7 @@ while True:
                     remove_set.add(idx)
                     new_list.append(idx)
 
+
     i = new_list.index(min(new_list))
     for _ in range(len(new_list)):
         out_file.write("{} ".format(idx_list[new_list[(i % len(new_list))]]))  # 돌리기 돌리도록 합세다/.
@@ -135,8 +136,11 @@ while True:
     out_file.write("\n")
 
     next_point = np.array([], dtype=int)
+    import pprint
     for i in range(np.alen(points)):
-        if not (i in point_set) and not (i in remove_set):
+        if np.array_equal(points[i], np.array([0, 0])):
+            next_point = np.append(next_point, np.array(points[i]))
+        elif not (i in point_set) and not (i in remove_set):
             next_point = np.append(next_point, np.array(points[i]))
         else:
             idx_list[i] = -1
